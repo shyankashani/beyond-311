@@ -5,36 +5,9 @@
         Beyond 311
       </b-navbar-brand>
     </b-navbar>
-    <b-container class="p-5">
-      <b-row>
-        <b-col>
-          <h3>
-            Help homeless neighbors find a place to belong.
-          </h3>
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col>
-          <h6>
-            Inform outreach-workers about people in need.
-          </h6>
-        </b-col>
-      </b-row>
-      <b-row class="mt-5 mb-4">
-        <b-col>
-          <b-button size="lg">
-            Get started
-          </b-button>
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col>
-          <h6>
-            If this is an emergency, call 911.
-          </h6>
-        </b-col>
-      </b-row>
-    </b-container>
+    <start v-if="!isStarted" v-on:start="start" />
+    <locate v-if="isStarted && !locationIsAllowed" v-on:locate="locate" />
+    <wait v-if="locationIsAllowed" />
     <b-navbar toggleable fixed="bottom" variant="white" type="light" class="border">
       <div>
         About
@@ -44,13 +17,38 @@
 </template>
 
 <script>
-export default {
-  name: 'Home',
-}
+  import Start from './Start';
+  import Locate from './Locate';
+  import Wait from './Wait';
+
+  export default {
+    name: 'Home',
+    components: {
+      Start,
+      Locate,
+      Wait
+    },
+    data: function () {
+      return {
+        isStarted: false,
+        locationIsAllowed: false,
+      }
+    },
+    methods: {
+      start: function (event) {
+        this.isStarted = true;
+      },
+      locate: function (event) {
+        this.locationIsAllowed = true;
+        navigator.geolocation.getCurrentPosition(() => window.location.href = 'https://stackoverflow.com/questions/35664550/vue-js-redirection-to-another-page')
+      },
+
+    },
+
+  }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 h3 {
   line-height: 1.4em;
 }
